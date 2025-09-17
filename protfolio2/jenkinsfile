@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    environment {
+        NETLIFY_AUTH_TOKEN = credentials('nfp_h3KKVUacxVoVwYeXAYTMG2GnidL9m1Amfb83')
+        NETLIFY_SITE_ID    = credentials('12695b45-d287-4a36-8286-fcc745fe7872')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-username/your-portfolio.git'
+            }
+        }
+
+        stage('Deploy to Netlify') {
+            steps {
+                sh 'netlify deploy --dir=. --prod --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Portfolio deployed successfully on Netlify!"
+        }
+        failure {
+            echo "❌ Deployment failed. Check logs."
+        }
+    }
+}
